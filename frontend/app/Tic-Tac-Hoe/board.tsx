@@ -6,6 +6,8 @@ export function Board() {
 
     const [board, setBoard] = useState<(null | 'X' | 'O')[]>(Array(9).fill(null));
     const [currentPlayer, setCurrentPlayer] = useState<'X'|'O'>('X');
+    const xMoves = [];
+    const oMoves = [];
 
     const winConditions = [
         [0,1,2],
@@ -29,26 +31,27 @@ export function Board() {
         newBoard[index] = currentPlayer;
 
         setBoard(newBoard);
-        setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
-
-        //falta adicionar a condição de no máximo 3 jogadas
         
+        const winner = checkWinner(newBoard);
+        
+        if (winner) {
+            alert(`${winner} venceu!`);
+        }
+        setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+        //falta adicionar a condição de no máximo 3 jogadas
+                
     }
 
-    useEffect(() => {
-        checkWinner();
-    }, [board]);
 
-
-    function checkWinner(){
-        winConditions.forEach((condition)=>{
+    function checkWinner(newBoard: ("X" | "O" | null)[]){
+        for (const condition of winConditions) {
             const [a,b,c] = condition;
 
-            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                alert(`${board[a]} venceu!`)
+            if (newBoard[a] && newBoard[a] === newBoard[b] && newBoard[a] === newBoard[c]) {
+                return newBoard[a];
             }
-
-        })
+        }
+        return null;
     }
 
     return (
