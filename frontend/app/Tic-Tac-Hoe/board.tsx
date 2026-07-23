@@ -6,8 +6,9 @@ export function Board() {
 
     const [board, setBoard] = useState<(null | 'X' | 'O')[]>(Array(9).fill(null));
     const [currentPlayer, setCurrentPlayer] = useState<'X'|'O'>('X');
-    const xMoves = [];
-    const oMoves = [];
+    const [xMoves, setXMoves] = useState<number[]>([]);
+    const [oMoves, setOMoves] = useState<number[]>([]);
+
 
     const winConditions = [
         [0,1,2],
@@ -20,29 +21,6 @@ export function Board() {
         [2,4,6]
     ]
 
-    //Aqui eu tenho que fazer o logica do game (depois eu modularizo)
-    //posso começar no x (apenas para testes eu faço sempre comecar por x)
-
-    function handleClick(index: number) {
-        if (board[index]) return;
-
-        const newBoard = [...board];
-
-        newBoard[index] = currentPlayer;
-
-        setBoard(newBoard);
-        
-        const winner = checkWinner(newBoard);
-        
-        if (winner) {
-            alert(`${winner} venceu!`);
-        }
-        setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
-        //falta adicionar a condição de no máximo 3 jogadas
-                
-    }
-
-
     function checkWinner(newBoard: ("X" | "O" | null)[]){
         for (const condition of winConditions) {
             const [a,b,c] = condition;
@@ -53,6 +31,53 @@ export function Board() {
         }
         return null;
     }
+
+    function handleClick(index: number) {
+        if (board[index]) return;
+
+        const newBoard = [...board];
+
+        //Remove primeira jogada
+        if (currentPlayer === 'X') {
+            const nextMoves = [...xMoves, index];
+
+            if (nextMoves.length > 3) {
+                const oldestMove = nextMoves.shift();
+                if (oldestMove !== undefined) {
+                    newBoard[oldestMove] = null;
+                }
+            }
+            newBoard[index] = 'X';
+            setXMoves(nextMoves);
+        } else { // Removido o 'if (currentPlayer === 'O')' redundante
+            const nextMoves = [...oMoves, index];
+
+            if (nextMoves.length > 3) {
+                const oldestMove = nextMoves.shift();
+                if (oldestMove !== undefined) {
+                    newBoard[oldestMove] = null;
+                }
+            }
+            newBoard[index] = 'O';
+            setOMoves(nextMoves);
+        }
+
+        newBoard[index] = currentPlayer;
+
+        setBoard(newBoard);
+        
+        const winner = checkWinner(newBoard);
+        
+        if (winner) {
+            alert(`${winner} venceu!`);
+        }
+
+        setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+        
+                
+    }
+
+
 
     return (
         <div className="board">
