@@ -1,6 +1,7 @@
 import fastify from "fastify";
 import cors from "@fastify/cors";
 import { Server } from "socket.io";
+import { registerConnection } from "./socket/connection";
 
 const PORT = 8000;
 const app = fastify();
@@ -17,9 +18,9 @@ const io = new Server(app.server,{
 })
 
 io.on("connection", (socket)=>{
-    console.log("a user conected");
+    registerConnection(io, socket);
 });
 
 app.listen({host: "0.0.0.0", port: PORT as number }, ()=>{
-    console.log("server running on port ")
+    console.log(`Server running on port ${PORT}, http://localhost:${PORT}`);
 })

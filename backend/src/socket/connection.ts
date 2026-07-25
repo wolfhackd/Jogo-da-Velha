@@ -1,4 +1,6 @@
 import { Server, Socket } from "socket.io";
+import { gameHandler } from "./handlers/game.handler";
+import { roomHandler } from "./handlers/room.handler";
 
 
 
@@ -6,9 +8,10 @@ import { Server, Socket } from "socket.io";
 
 export function registerConnection(io: Server, socket: Socket) {
 
-    //minha base principal
-
-
+    //Handler de entrar em partida
+    roomHandler(io, socket);
+    gameHandler(io, socket);
+    // gameEventsHandler(io, socket);
 
 
     socket.on("disconnect", () => {
