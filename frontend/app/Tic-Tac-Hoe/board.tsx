@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Square } from "./square";
 
 
@@ -9,7 +9,6 @@ export function Board() {
     const [xMoves, setXMoves] = useState<number[]>([]);
     const [oMoves, setOMoves] = useState<number[]>([]);
 
-
     const winConditions = [
         [0,1,2],
         [3,4,5],
@@ -19,7 +18,7 @@ export function Board() {
         [2,5,8],
         [0,4,8],
         [2,4,6]
-    ]
+    ];
 
     function checkWinner(newBoard: ("X" | "O" | null)[]){
         for (const condition of winConditions) {
@@ -30,7 +29,7 @@ export function Board() {
             }
         }
         return null;
-    }
+    };
 
     function handleClick(index: number) {
         if (board[index]) return;
@@ -49,7 +48,7 @@ export function Board() {
             }
             newBoard[index] = 'X';
             setXMoves(nextMoves);
-        } else { // Removido o 'if (currentPlayer === 'O')' redundante
+        } else {
             const nextMoves = [...oMoves, index];
 
             if (nextMoves.length > 3) {
@@ -60,7 +59,7 @@ export function Board() {
             }
             newBoard[index] = 'O';
             setOMoves(nextMoves);
-        }
+        };
 
         newBoard[index] = currentPlayer;
 
@@ -69,15 +68,12 @@ export function Board() {
         const winner = checkWinner(newBoard);
         
         if (winner) {
-            alert(`${winner} venceu!`);
+            console.log(winner);
         }
 
         setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
         
-                
-    }
-
-
+    };
 
     return (
         <div className="board">
