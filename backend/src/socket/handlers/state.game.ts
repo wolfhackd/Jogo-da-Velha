@@ -9,6 +9,16 @@ type Game = {
     X: string | null;
     O: string | null;
   };
+
+  moves: {
+    X: number[];
+    O: number[];
+  }
+
+  // points: {
+  //   X: number;
+  //   O: number;
+  // };
 };
 
 
