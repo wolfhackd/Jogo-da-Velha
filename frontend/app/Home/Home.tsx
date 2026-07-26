@@ -4,7 +4,6 @@ import { Button } from "~/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { socket } from "~/config/socket/socket";
 import { v4 as uuidv4 } from 'uuid';
 
 export default function Home() {
@@ -17,7 +16,9 @@ export default function Home() {
         setUsername(e.target.username.value);
     }
 
-    const handleCreateRoom = () => {
+    const handleCreateRoom = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
         const roomId = uuidv4();
         navigate(`/game/${roomId}`);
     }
@@ -50,7 +51,7 @@ export default function Home() {
                         <Input
                         id="username"
                         name="username"
-                        type="username"
+                        type="text"
                         placeholder="Coxinha123"
                         required
                         />
@@ -75,17 +76,26 @@ export default function Home() {
                 </CardHeader>
                 <CardContent className="grid gap-4">
 
-                    <div className="flex flex-col gap-2 w-full">
-                    <form onSubmit={handleJoinRoom}>
-
-                    <Input placeholder="ID da sala" name="roomId"/>
-                    <Button type="submit" className="w-full">Entrar</Button>
-                    
+                    <form onSubmit={handleJoinRoom} className="flex flex-col gap-2 w-full">
+                        <Input placeholder="ID da sala" name="roomId" required />
+                        <Button type="submit" className="w-full">Entrar</Button>
                     </form>
+
+                    <div className="relative flex py-2 items-center">
+                        <div className="flex-grow border-t border-gray-700"></div>
+                        <span className="flex-shrink mx-4 text-gray-400 text-xs">ou</span>
+                        <div className="flex-grow border-t border-gray-700"></div>
                     </div>
 
                     <div className="flex flex-col gap-2 w-full">
-                    <Button className="w-full" onClick={handleCreateRoom}>Crie uma sala</Button>
+                        <Button 
+                            type="button" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={handleCreateRoom}
+                        >
+                            Crie uma sala
+                        </Button>
                     </div>
                 </CardContent>
               

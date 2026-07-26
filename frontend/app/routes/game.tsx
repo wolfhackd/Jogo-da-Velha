@@ -1,4 +1,4 @@
-import { TicTacToe } from "../Tic-Tac-Hoe/TicTacToe";
+import TicTacToe from "../Tic-Tac-Hoe/TicTacToe";
 import type { Route } from "./+types/game";
 
 export function meta({}: Route.MetaArgs) {

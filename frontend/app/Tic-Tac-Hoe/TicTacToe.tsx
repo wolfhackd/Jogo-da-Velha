@@ -2,17 +2,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Board } from "./board";
 import { useEffect } from "react";
 import { socket } from "~/config/socket/socket"
+import { useParams } from "react-router";
 
 
 //Tenho que fazer ele pegar o parametro da rota para criar esse jogo
-export function TicTacToe() {
+export default function TicTacToe() {
+  const {roomId} = useParams();
 
   useEffect(()=>{
-    // esse connect vai para a entrada do nick
-    socket.connect()
+    socket.connect();
+    
+    if(roomId){
+      console.log("Conectando na sala de testes:", roomId);
+      socket.emit('room:join',roomId);
+    }
+    
+    return () => {
+      socket.disconnect();
+    }
+  },[roomId])
 
-
-  },[])
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 p-6">
