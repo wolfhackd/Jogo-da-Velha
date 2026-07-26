@@ -1,14 +1,15 @@
 import { Server, Socket } from "socket.io";
-import { game } from "./state.game";
-
+import { playMove } from "./game.service";
 
 
 export function gameHandler(io: Server, socket: Socket){
     
 
-    socket.on("game:play", (data) =>{
-        // io.emit("game:play", data);
-        
+    socket.on("game:play", ({ position }) => {
+        playMove(io, socket, position);
+    });
 
-    })
+    // socket.on("game:play",()=>{});
+    // socket.on("game:restart",()=>{});
+    // games.delete(roomId);
 }

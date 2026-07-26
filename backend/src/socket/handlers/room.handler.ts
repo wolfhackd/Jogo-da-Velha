@@ -1,17 +1,18 @@
 import { Server, Socket } from "socket.io";
+import { joinGame, leaveGame } from "./game.service";
 
 
 
 export function roomHandler(io: Server, socket: Socket) {
 
-    socket.on("room:join", (data) => {
-        socket.join(data.room);
-        io.to(data.room).emit("room:joined", `User ${socket.id} joined room ${data.room}`);
+    socket.on("room:join", ({roomId}) => {
+        socket.join(roomId);
+        socket.data.roomId = roomId;
+        joinGame(socket);
     })
 
-    socket.on("room:leave", (data) => {
-        socket.leave(data.room);
-        io.to(data.room).emit("room:left", `User ${socket.id} left room ${data.room}`);
+    socket.on("room:leave", () => {
+        leaveGame(io, socket);
     })
     
 }
