@@ -56,49 +56,25 @@ export function playMove(io: Server, socket: Socket, position: number) {
 
     if (!game) return;
 
-    // Player X
-    if(game?.players.X === socket.id && game.currentPlayer === "X") {
-        
-        if(game.board[position]) {
-            io.to(roomId).emit("game:error", {message: "Position already played"});
-            return;
-        };
+    const playerSign = game.currentPlayer;
+    const opponentSign = playerSign === "X" ? "O" : "X";
 
-        game.board[position] = "X";
+    if (game.players[playerSign] !== socket.id) return;
 
-        game.moves.X.push(position);
-        
-        if(game.moves.X.length > 3) {
-            const oldestMove = game.moves.X.shift();
-            game.board[oldestMove!] = null;
-        }
-        
-        game.currentPlayer = "O";
-        io.to(roomId).emit("game:play", {board: game.board, currentPlayer: game.currentPlayer});
-        return
-    }
-    
-    // Player O
-    if(game?.players.O === socket.id && game.currentPlayer === "O") {
+    if (game.board[position]) {
+        io.to(roomId).emit("game:error", {message: "Position already played"});
+        return;
+    };
+    game.board[position] = playerSign;
+    game.moves[playerSign].push(position);
 
-        if(game.board[position]) {
-            io.to(roomId).emit("game:error", {message: "Position already played"});
-            return;
-        };
-        game.board[position] = "O";
-        
-        game.moves.O.push(position);
-
-        if(game.moves.O.length > 3) {
-            const oldestMove = game.moves.O.shift();
-            game.board[oldestMove!] = null;
-        }
-
-        game.currentPlayer = "X";
-        io.to(roomId).emit("game:play", {board: game.board, currentPlayer: game.currentPlayer});
-        return
+    if (game.moves[playerSign].length > 3) {
+        const oldestMove = game.moves[playerSign].shift();
+        game.board[oldestMove!] = null;
     }
 
+    game.currentPlayer = opponentSign;
+    io.to(roomId).emit("game:play", {board: game.board, currentPlayer: game.currentPlayer});
 
 }
 
