@@ -1,28 +1,66 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Board } from "./board";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "~/config/socket/socket"
-import { useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
+
+export type Game = {
+  roomId: string;
+  board: ("X" | "O" | null)[];
+  currentPlayer: "X" | "O";
+  winner: "X" | "O" | null;
+
+  players: {
+    X: string | null;
+    O: string | null;
+  };
+
+  // playerNames: {
+  //   X: string | null;
+  //   O: string | null;
+  // };
+
+  moves: {
+    X: number[];
+    O: number[];
+  }
+
+  // points: {
+  //   X: number;
+  //   O: number;
+  // };
+};
 
 
-//Tenho que fazer ele pegar o parametro da rota para criar esse jogo
 export default function TicTacToe() {
   const {roomId} = useParams();
+  const [ready,setReady] = useState(false);
+  const [game, setGame] = useState<Game | null>(null);
 
+  //Conexão com sala
   useEffect(()=>{
-    socket.connect();
-    
-    if(roomId){
-      console.log("Conectando na sala de testes:", roomId);
-      socket.emit('room:join',roomId);
+    if(!socket.connected){
+      socket.connect();
     }
-    
     return () => {
       socket.disconnect();
     }
-  },[roomId])
+  },[]);
 
+  //seta o jogo
+  useEffect(() => {
+    const handleUpdate = (game: Game) => {
+      setGame(game);
+    };
 
+    socket.on("game:update", handleUpdate);
+
+    return () => {
+      socket.off("game:update", handleUpdate);
+    };
+  }, []);
+
+  
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 p-6">
       <Card className="w-fit">
@@ -33,24 +71,25 @@ export default function TicTacToe() {
 
           <CardDescription>
             {/* Sempre começa em X */}
-            Vez de <span className="font-bold text-blue-500">X</span>
+            {/* Vez de <span className="font-bold text-blue-500">{game?.currentPlayer}</span> */}
+            Vez de <span className="font-bold text-blue-500">{game?.currentPlayer}</span>
             <div className="flex justify-between items-center">
               <div className="flex flex-col">
                 {/* Devo considerar que o player pode ainda não estar em sala */}
-                <span>Mad</span>
+                <span>{game?.players.X}</span>
                 <span className="font-bold text-blue-500">X</span>
               </div>
               <span>1:0</span>
               <div className="flex flex-col">
                 {/* Devo considerar que o player pode ainda não estar em sala */}
-                <span>Wolf</span>
+                <span>{game?.players.O}</span>
                 <span className="font-bold text-red-500">O</span>
               </div>
             </div>
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="flex justify-center">
+        <CardContent className={(ready ? "" :  "pointer-events-none") + " flex justify-center" } >
           <Board />
         </CardContent>
       </Card>
