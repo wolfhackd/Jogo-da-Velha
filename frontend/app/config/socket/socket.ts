@@ -2,5 +2,9 @@ import io from "socket.io-client";
 
 
 export const socket = io(import.meta.env.VITE_BACKEND_URL,{
-    autoConnect: false
+    autoConnect: false,
+    // withCredentials: true
+    auth: {
+        userId: ""
+    }
 });

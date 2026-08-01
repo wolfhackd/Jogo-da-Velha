@@ -1,7 +1,6 @@
-import TicTacToe from "../Tic-Tac-Hoe/TicTacToe";
-import type { Route } from "./+types/game";
+import TicTacToe from "../modules/Tic-Tac-Hoe/TicTacToe";
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "My TicTacToe" },
     { name: "description", content: "Welcome to TicTacToe!" },

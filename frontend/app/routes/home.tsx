@@ -1,15 +1,14 @@
-import Home from "~/Home/Home";
-import type { Route } from "./+types/home";
+import HomePage from "~/modules/Home/HomePage";
 
 
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "My TicTacToe" },
     { name: "description", content: "Welcome to TicTacToe!" },
   ];
 }
 
-export default function HomeRoute() {
-  return < Home/>;
+export default function Home() {
+  return < HomePage/>;
 }

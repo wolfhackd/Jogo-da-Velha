@@ -9,68 +9,25 @@ import { socket } from "~/config/socket/socket";
 
 export default function Home() {
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
+    const [roomId, setRoomId] = useState<string>("");
     
-    function getPlayerId(username: string) {
-        let playerId = localStorage.getItem("playerId");
+   
 
-        if (!playerId) {
-            playerId = crypto.randomUUID();
-            localStorage.setItem("playerId", playerId);
-        }
-
-        localStorage.setItem("playerName", username);
-
-        return playerId;
-    }
-
-    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const form = e.currentTarget;
-        const username = new FormData(form).get("username") as string;
-
-        if (!username.trim()) return;
-
-        getPlayerId(username);
-        setUsername(username);
-    };
-
-    const handleCreateRoom = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        
+    const handleJoin = () =>{
         const roomId = uuidv4();
         navigate(`/game/${roomId}`);
     }
 
-    const handleJoinRoom = (e: React.SubmitEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const roomId = e.target.roomId.value;
+    const handleJoinId = (event: React.FormEvent<HTMLFormElement>) =>{
+        event.preventDefault();
+        if(!roomId) return;
         navigate(`/game/${roomId}`);
-    }
-
-   useEffect(()=>{
-    if(!socket.connected){
-      socket.connect();
-    }
-    return () => {
-      socket.disconnect();
-    }
-    },[]);
-
-    useEffect(()=>{
-        const name = localStorage.getItem("playerName");
-        if(name){
-            setUsername(name);
-        }
-    },[]);
-
-
+    };
 
     return (
         <main className=" flex min-h-screen items-center justify-center bg-gray-900">
 
-            {!username && 
+            {/* {!username && 
             <Card className="w-full max-w-sm">
                 <CardHeader>
                     <CardTitle>Escolha seu apelido</CardTitle>
@@ -101,7 +58,7 @@ export default function Home() {
                 </CardFooter>
             </Card>
             }
-            {username && 
+            {username &&  */}
             <Card>
                 <CardHeader>
                     <CardTitle>Entre em uma sala</CardTitle>
@@ -111,9 +68,11 @@ export default function Home() {
                 </CardHeader>
                 <CardContent className="grid gap-4">
 
-                    <form onSubmit={handleJoinRoom} className="flex flex-col gap-2 w-full">
-                        <Input placeholder="ID da sala" name="roomId" required />
-                        <Button type="submit" className="w-full">Entrar</Button>
+                    <form className="flex flex-col gap-2 w-full" onSubmit={handleJoinId}>
+                        <Input placeholder="ID da sala" name="roomId" required onChange={(e) => setRoomId(e.target.value)} />
+                        <Button className="w-full" type="submit">
+                            Entrar
+                        </Button>
                     </form>
 
                     <div className="relative flex py-2 items-center">
@@ -127,7 +86,7 @@ export default function Home() {
                             type="button" 
                             variant="outline" 
                             className="w-full" 
-                            onClick={handleCreateRoom}
+                            onClick={handleJoin}
                         >
                             Crie uma sala
                         </Button>
@@ -135,7 +94,7 @@ export default function Home() {
                 </CardContent>
               
             </Card>
-            } 
+            {/* }  */}
 
         </main>
   )

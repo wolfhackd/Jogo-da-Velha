@@ -37,29 +37,51 @@ export default function TicTacToe() {
   const [ready,setReady] = useState(false);
   const [game, setGame] = useState<Game | null>(null);
 
-  //Conexão com sala
-  useEffect(()=>{
-    if(!socket.connected){
-      socket.connect();
-    }
-    return () => {
-      socket.disconnect();
-    }
-  },[]);
 
-  //seta o jogo
+  // useEffect(()=>{
+  //   socket.on("game:joined", (data) => {
+  //   console.log(data.socketId);
+  //   console.log(data.symbol);
+  //   });
+  //   socket.emit("room:join", roomId);
+  //   socket.on("game:joined", (data) =>console.log(data));
+  // },[roomId]); 
+
+   const [userId, setUserId] = useState<string>("");
+    useEffect(() => {
+        const id = localStorage.getItem("userId");
+        if(id) setUserId(id);
+    }, []);
+
+    useEffect(()=>{
+        const id = localStorage.getItem("userId");
+        socket.auth = { userId: id };
+
+        if(socket.connected) return;
+        
+        socket.connect();
+    },[]);
+
+
   useEffect(() => {
-    const handleUpdate = (game: Game) => {
-      setGame(game);
+    const handleJoined = (data: { socketId: string; symbol: "X" | "O" }) => {
+        console.log("Entrou:", data);
     };
 
-    socket.on("game:update", handleUpdate);
+    const handleReconnected = (data: { socketId: string; symbol: "X" | "O" }) => {
+        console.log("Reconectou:", data);
+    };
+
+    socket.on("game:joined", handleJoined);
+    socket.on("game:reconnected", handleReconnected);
+
+    socket.emit("room:join", roomId);
 
     return () => {
-      socket.off("game:update", handleUpdate);
+        socket.off("game:joined", handleJoined);
+        socket.off("game:reconnected", handleReconnected);
     };
-  }, []);
-
+}, [roomId]);
   
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 p-6">
