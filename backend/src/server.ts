@@ -2,6 +2,7 @@ import fastify from "fastify";
 import cors from "@fastify/cors";
 import { Server } from "socket.io";
 import { registerConnection } from "./socket/connection";
+import { socketMiddleware } from "./socket/middleware/middleware";
 
 const PORT = 8000;
 const app = fastify();
@@ -16,6 +17,8 @@ const io = new Server(app.server,{
         methods: ["GET", "POST"]
     }
 })
+
+io.use(socketMiddleware);
 
 io.on("connection", (socket)=>{
     registerConnection(io, socket);
