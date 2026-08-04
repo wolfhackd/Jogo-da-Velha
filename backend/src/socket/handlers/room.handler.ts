@@ -2,93 +2,110 @@ import { Server, Socket } from "socket.io";
 import { Games } from "./game.state";
 
 export function roomHandler(io: Server, socket: Socket) {
+    socket.on("room:join", (roomId: string) => {
+        const userId = socket.data.userId;
 
-    socket.on("room:join", (roomId: string) =>{
         let game = Games.get(roomId);
 
-        if(game) {
-            
-            //reconnect x e o
-            if(game.players.X === socket.data.userId) {
-                game.players.X = socket.id;
+        // ==========================================
+        // CRIA O JOGO
+        // ==========================================
+        if (!game) {
+            game = {
+                roomId,
+                board: Array(9).fill(null),
+                currentPlayer: "X",
+                players: {
+                    X: {
+                        userId,
+                        socketId: socket.id,
+                    },
+                    O: null,
+                },
+                moves: {
+                    X: [],
+                    O: [],
+                },
+            };
 
-                socket.join(roomId);
+            Games.set(roomId, game);
 
-                socket.emit("game:reconnected", {
-                    socketId: socket.id,
-                    symbol: "X",
-                });
-                
-                Games.set(roomId, game);
-                return;
+            socket.join(roomId);
 
-            } else if(game.players.O === socket.data.userId) {
-                game.players.O = socket.id;
-
-                socket.emit("game:reconnected", {
-                    socketId: socket.id,
-                    symbol: "O",
-                });                
-                
-                Games.set(roomId, game);
-                socket.join(roomId);
-
-                io.to(roomId).emit("game:start",{
-                    game: game
-                })
-
-                return;
-            }
-            
-            //caso o jogo nao esteja cheio
-            if (game.players.O === null) {
-                game.players.O = socket.id;
-
-                socket.join(roomId);
-
-                socket.emit("game:joined", {
-                    socketId: socket.id,
-                    symbol: "O",
-                });
-
-                Games.set(roomId, game);
-
-                io.to(roomId).emit("game:start",{
-                    game: game
-                })
-
-                return;
-            }
-
-            // Sala cheia
-            socket.emit("game:error", {
-                message: "Room full",
+            socket.emit("game:joined", {
+                socketId: socket.id,
+                symbol: "X",
             });
 
             return;
         }
-        //Criar sala
-        game = {
-            roomId: roomId,
-            board: Array(9).fill(null),
-            currentPlayer: "X",
-            players: {
-                X: socket.id,
-                O: null
-            },
-            moves: {
-                X: [],
-                O: []
-            }
-        }
-        
-        Games.set(roomId, game);
-        socket.join(roomId);
 
-        socket.emit("game:joined", {
-            socketId: socket.id,
-            symbol: "X",
+        // ==========================================
+        // RECONEXÃO DO JOGADOR X
+        // ==========================================
+        if (game.players.X?.userId === userId) {
+            game.players.X.socketId = socket.id;
+
+            socket.join(roomId);
+
+            socket.emit("game:reconnected", {
+                socketId: socket.id,
+                symbol: "X",
+            });
+
+            Games.set(roomId, game);
+
+            return;
+        }
+
+        // ==========================================
+        // RECONEXÃO DO JOGADOR O
+        // ==========================================
+        if (game.players.O?.userId === userId) {
+            game.players.O.socketId = socket.id;
+
+            socket.join(roomId);
+
+            socket.emit("game:reconnected", {
+                socketId: socket.id,
+                symbol: "O",
+            });
+
+            Games.set(roomId, game);
+
+            io.to(roomId).emit("game:start", game);
+
+            return;
+        }
+
+        // ==========================================
+        // ENTRA COMO JOGADOR O
+        // ==========================================
+        if (!game.players.O) {
+            game.players.O = {
+                userId,
+                socketId: socket.id,
+            };
+
+            socket.join(roomId);
+
+            socket.emit("game:joined", {
+                socketId: socket.id,
+                symbol: "O",
+            });
+
+            Games.set(roomId, game);
+
+            io.to(roomId).emit("game:start", game);
+
+            return;
+        }
+
+        // ==========================================
+        // SALA CHEIA
+        // ==========================================
+        socket.emit("game:error", {
+            message: "Room full",
         });
-   })
-    
+    });
 }
