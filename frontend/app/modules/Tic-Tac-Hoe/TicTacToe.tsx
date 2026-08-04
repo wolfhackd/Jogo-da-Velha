@@ -1,26 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Board } from "./board";
+import { Board, type Game } from "./board";
 import { useEffect, useState } from "react";
-import { socket } from "~/config/socket/socket"
-import { useLocation, useNavigate, useParams } from "react-router";
-
-export type Game = {
-  roomId: string;
-  board: ("X" | "O" | null)[];
-  currentPlayer: "X" | "O";
-  winner: "X" | "O" | null;
-
-  players: {
-    X: string | null;
-    O: string | null;
-  };
-
-  moves: {
-    X: number[];
-    O: number[];
-  }
-
-};
+import { socket } from "~/config/socket/socket";
+import { useNavigate, useParams } from "react-router";
 
 export default function TicTacToe() {
   const {roomId} = useParams();
@@ -28,30 +10,30 @@ export default function TicTacToe() {
   const [game, setGame] = useState<Game | null>(null);
   const navigate = useNavigate();
 
-   const [userId, setUserId] = useState<string>("");
-    useEffect(() => {
-        const id = localStorage.getItem("userId");
-        if(id) setUserId(id);
-    }, []);
+  const [userId, setUserId] = useState<string>("");
+  useEffect(() => {
+      const id = localStorage.getItem("userId");
+      if(id) setUserId(id);
+  }, []);
 
-    useEffect(()=>{
-        const id = localStorage.getItem("userId");
-        socket.auth = { userId: id };
+  useEffect(()=>{
+    const id = localStorage.getItem("userId");
+    socket.auth = { userId: id };
 
-        if(socket.connected) return;
-        
-        socket.connect();
-    },[]);
+    if(socket.connected) return;
+    
+    socket.connect();
+  },[]);
 
   useEffect(() => {
     const handleJoined = (data: { socketId: string; symbol: "X" | "O" }) => {
-        console.log("Entrou:", data);
-        localStorage.setItem("userId", data.socketId);
+      console.log("Entrou:", data);
+      localStorage.setItem("userId", data.socketId);
     };
 
     const handleReconnected = (data: { socketId: string; symbol: "X" | "O" }) => {
-        console.log("Reconectou:", data);
-        localStorage.setItem("userId", data.socketId);
+      console.log("Reconectou:", data);
+      localStorage.setItem("userId", data.socketId);
     };
 
     const handleGameStart = (data: Game) =>{
@@ -109,7 +91,7 @@ export default function TicTacToe() {
         </CardHeader>
 
         <CardContent className={(ready ? "" :  "pointer-events-none") + " flex justify-center" } >
-          <Board />
+          <Board game={game}  />
         </CardContent>
       </Card>
     </main>
