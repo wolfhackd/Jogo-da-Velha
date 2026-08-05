@@ -44,7 +44,7 @@ export function roomHandler(io: Server, socket: Socket) {
         // RECONEXÃO DO JOGADOR X
         // ==========================================
         if (game.players.X?.userId === userId) {
-            game.players.X.socketId = socket.id;
+            game.players.X!.socketId = socket.id;
 
             socket.join(roomId);
 
@@ -62,7 +62,7 @@ export function roomHandler(io: Server, socket: Socket) {
         // RECONEXÃO DO JOGADOR O
         // ==========================================
         if (game.players.O?.userId === userId) {
-            game.players.O.socketId = socket.id;
+            game.players.O!.socketId = socket.id;
 
             socket.join(roomId);
 
