@@ -17,12 +17,21 @@ export type Game = {
     X: (number)[];
     O: (number)[];
   }
-
 };
 
 type GameProps = {
     game: Game | null;
 };
+
+type GameUpdate = {
+    board: ("X" | "O" | null)[];
+    currentPlayer: "X" | "O";
+    moves: {
+        X: (number)[];
+        O: (number)[];
+    }
+    // winner: "X" | "O" | null;
+}
 
 export function Board({ game }: GameProps) {
 
@@ -32,33 +41,23 @@ export function Board({ game }: GameProps) {
         setGame(game);
     },[game]);
 
-    // const winConditions = [
-    //     [0,1,2],
-    //     [3,4,5],
-    //     [6,7,8],
-    //     [0,3,6],
-    //     [1,4,7],
-    //     [2,5,8],
-    //     [0,4,8],
-    //     [2,4,6]
-    // ];
+    useEffect(()=>{
+        const handleGameUpdate = (data: GameUpdate) => {
+            localGame && setGame({...localGame, ...data});
+            console.log("Jogo atualizado:", data);
+            console.log("Jogo local:", localGame);
+        }
 
+        socket.on("game:board", handleGameUpdate);
 
-
-    // function checkWinner(newBoard: ("X" | "O" | null)[]){
-    //     for (const condition of winConditions) {
-    //         const [a,b,c] = condition;
-
-    //         if (newBoard[a] && newBoard[a] === newBoard[b] && newBoard[a] === newBoard[c]) {
-    //             return newBoard[a];
-    //         }
-    //     }
-    //     return null;
-    // };
+        return () => {
+            socket.off("game:board", handleGameUpdate);
+        }
+    })
 
     function handleClick(index: number) {
-        socket.emit('game:play', index, localGame?.roomId);
-        console.log("Clicou na posição:", index);
+        socket.emit('game:play', {position: index, roomId: localGame!.roomId});
+        console.log("Clicou na posição:", index);
     };
 
     return (
