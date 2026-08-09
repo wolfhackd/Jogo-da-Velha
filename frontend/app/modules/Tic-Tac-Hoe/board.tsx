@@ -3,20 +3,20 @@ import { Square } from "./square";
 import { socket } from "~/config/socket/socket";
 
 export type Game = {
-  roomId: string;
-  board: ("X" | "O" | null)[];
-  currentPlayer: "X" | "O";
-  winner: "X" | "O" | null;
+    roomId: string;
+    board: ("X" | "O" | null)[];
+    currentPlayer: "X" | "O";
+    winner: "X" | "O" | null;
 
-  players: {
-    X: string | null;
-    O: string | null;
-  };
+    players: {
+        X: string | null;
+        O: string | null;
+    };
 
-  moves: {
-    X: (number)[];
-    O: (number)[];
-  }
+    moves: {
+        X: (number)[];
+        O: (number)[];
+    }
 };
 
 type GameProps = {
