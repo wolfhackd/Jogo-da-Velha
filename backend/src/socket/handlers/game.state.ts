@@ -15,5 +15,9 @@ export interface Game {
         X: number[];
         O: number[];
     };
+    score: {
+        X: number;
+        O: number;
+    };
 } 
 export const Games = new Map<string, Game>();

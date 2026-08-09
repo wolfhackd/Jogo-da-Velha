@@ -26,6 +26,10 @@ export function roomHandler(io: Server, socket: Socket) {
                     X: [],
                     O: [],
                 },
+                score: {
+                    X: 0,
+                    O: 0,
+                }
             };
 
             Games.set(roomId, game);

@@ -1,39 +1,58 @@
 import { Server, Socket } from "socket.io";
 import { Games } from "./game.state";
 
+const winnerConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],                                        
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+];
+
+const checkWinner = (board: (null | "X" | "O")[]): "X" | "O" | null => {
+    for (const condition of winnerConditions) {
+        const [a, b, c] = condition;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            return board[a];
+        }
+    }
+    return null;
+};
+
 
 export function gameHandler(io: Server, socket: Socket){
-    // falta criar a regra do jogo das 4 jogadas
 
 
     socket.on("game:play", ({ position, roomId }) => {
-        console.log("game:play", position, roomId);
-        //pego o jogo pelo roomId
+
         const game = Games.get(roomId);
-        //pego o jogador pelo socketId
+
         let player: "X" | "O" | null = null;
         if(game?.players.X?.socketId === socket.id){
             player = "X";
         }else if(game?.players.O?.socketId === socket.id){
             player = "O";
         };
-        //verifico se é a vez do jogador
+
         if(player !== game?.currentPlayer){
             return;
         };
-        //verifico se a posição está livre
+
         if(game?.board[position] !== null){
             return;
         };
-        //marco a jogada no tabuleiro
+
         game.board[position] = player;
-        //salvo a jogada do jogador
+
         if(player === "X"){
             game.moves.X.push(position);
         }else{
             game.moves.O.push(position);
         }
-        //se for a quarta jogada eu removo a primeira
+
         if(game.moves.X.length > 3){
             
             const firstMove = game.moves.X.shift();
@@ -43,27 +62,33 @@ export function gameHandler(io: Server, socket: Socket){
             const firstMove = game.moves.O.shift();
             game.board[firstMove!] = null;
         }
-        //atualizo o tabuleiro
+
         Games.set(roomId, game);
-        //verifico se alguém ganhou
-        //const winner = checkWinner(game.board);
-        //envio o tabuleiro atualizado para os jogadores
+        const winner = checkWinner(game.board);
+
+        
         if(game.currentPlayer === "X"){
             game.currentPlayer = "O";
         }else{
             game.currentPlayer = "X";
         }
+
+        io.to(roomId).emit("game:switch", { currentPlayer: game.currentPlayer });
+
         io.to(roomId).emit("game:board", {
             board: game.board,
             currentPlayer: game.currentPlayer,
             moves: game.moves
         });
-        //se alguém ganhou, envio a mensagem de vitória para os jogadores
-        
-        //se ninguém ganhou, envio a mensagem de vez para o próximo jogador
-    });
 
-    // socket.on("game:play",()=>{});
-    // socket.on("game:restart",()=>{});
-    // games.delete(roomId);
+        if (winner) {
+            game.score[winner] += 1;
+            game.board.fill(null);
+            game.moves.X = [];
+            game.moves.O = [];
+            game.currentPlayer = winner === "X" ? "O" : "X";
+            Games.set(roomId, game);
+            io.to(roomId).emit("game:win", game);
+        }
+    });
 }
