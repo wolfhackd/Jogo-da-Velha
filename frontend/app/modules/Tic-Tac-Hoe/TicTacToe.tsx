@@ -11,6 +11,7 @@ export default function TicTacToe() {
   const [currentPlayer, setCurrentPlayer] = useState<"X" | "O">("X");
   const navigate = useNavigate();
 
+
   const [userId, setUserId] = useState<string>("");
   useEffect(() => {
       const id = localStorage.getItem("userId");
@@ -52,11 +53,17 @@ export default function TicTacToe() {
       setCurrentPlayer(data.currentPlayer);
     }
 
+    const handleGameWin = (data: Game) => {
+      setGame(data);
+    }
+
+
     socket.on("game:joined", handleJoined);
     socket.on("game:reconnected", handleReconnected);
     socket.on("game:start", handleGameStart);
     socket.on("game:error", handleGameError);
     socket.on("game:switch", handleSwitchPlayer);
+    socket.on("game:win", handleGameWin)
 
     socket.emit("room:join", roomId);
 
@@ -78,18 +85,14 @@ export default function TicTacToe() {
           </CardTitle>
 
           <CardDescription>
-            {/* Sempre começa em X */}
-            {/* Vez de <span className="font-bold text-blue-500">{game?.currentPlayer}</span> */}
             Vez de <span className={currentPlayer === "X" ? "text-blue-500 font-bold" : "text-red-500 font-bold"}>{currentPlayer}</span>
             <div className="flex justify-between items-center">
               <div className="flex flex-col">
-                {/* Devo considerar que o player pode ainda não estar em sala */}
                 <span>Player 1</span>
                 <span className="font-bold text-blue-500">X</span>
               </div>
-              <span>1:0</span>
+              <span>{game?.score.X}:{game?.score.O}</span>
               <div className="flex flex-col">
-                {/* Devo considerar que o player pode ainda não estar em sala */}
                 <span>Player 2</span>
                 <span className="font-bold text-red-500">O</span>
               </div>

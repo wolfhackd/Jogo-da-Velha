@@ -16,6 +16,10 @@ export type Game = {
     moves: {
         X: (number)[];
         O: (number)[];
+    },
+    score: {
+        X: number;
+        O: number;
     }
 };
 
