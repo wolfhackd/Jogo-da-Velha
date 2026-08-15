@@ -1,87 +1,151 @@
-# Welcome to React Router!
+# Frontend - Jogo da Velha
 
-A modern, production-ready template for building full-stack React applications using React Router.
+## Visão geral
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+Este frontend é a interface web do Jogo da Velha multiplayer. Ele conecta com o backend por WebSocket, permite criar ou entrar em salas, e exibe o estado do tabuleiro em tempo real para dois jogadores.
 
-## Features
+A aplicação foi construída com React, React Router e TypeScript, usando Socket.IO para sincronizar jogadas e eventos da partida.
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## Tecnologias
 
-## Getting Started
+- React 19
+- React Router 8
+- TypeScript
+- Vite
+- Socket.IO Client
+- Tailwind CSS
+- shadcn/ui
 
-### Installation
+## Requisitos
 
-Install the dependencies:
+- Node.js 18+
+- npm
+- Backend rodando localmente ou em um servidor acessível
+
+## Configuração
+
+1. Acesse a pasta do frontend:
+
+```bash
+cd frontend
+```
+
+2. Instale as dependências:
 
 ```bash
 npm install
 ```
 
-### Development
+3. Crie um arquivo `.env` na raiz do frontend com a URL do backend:
 
-Start the development server with HMR:
+```env
+VITE_BACKEND_URL=http://localhost:3000
+```
+
+> Ajuste a URL conforme o ambiente do backend. Se o backend estiver em outro host ou porta, substitua o valor acima.
+
+## Scripts
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
+Inicia o servidor de desenvolvimento do React Router.
 
 ```bash
 npm run build
 ```
 
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
+Gera a build de produção.
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+npm run start
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+Executa a aplicação em modo produção.
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
+```bash
+npm run typecheck
 ```
+
+Valida os tipos TypeScript e gera os tipos do React Router.
+
+## Como usar
+
+### 1. Página inicial
+
+Na rota `/`, o usuário pode:
+
+- criar uma nova sala automaticamente;
+- entrar em uma sala informando um ID manualmente.
+
+### 2. Sala da partida
+
+Ao acessar `/game/:roomId`, o frontend:
+
+- conecta ao Socket.IO;
+- envia o evento para entrar na sala;
+- recebe o estado inicial do jogo;
+- sincroniza a vez do jogador e o tabuleiro.
+
+### 3. Fluxo do jogo
+
+- O jogador cria ou entra em uma sala.
+- O backend define os símbolos e a ordem da partida.
+- O cliente recebe eventos como:
+  - `game:start`
+  - `game:switch`
+  - `game:board`
+  - `game:win`
+  - `game:error`
+- O tabuleiro é renderizado e as jogadas são enviadas para o backend.
+
+## Estrutura do projeto
+
+```text
+frontend/
+├── app/
+│   ├── components/
+│   ├── config/
+│   │   └── socket/
+│   ├── lib/
+│   ├── modules/
+│   │   ├── Home/
+│   │   └── Tic-Tac-Hoe/
+│   ├── routes/
+│   └── root.tsx
+├── public/
 ├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+├── tsconfig.json
+├── vite.config.ts
+├── react-router.config.ts
+├── Dockerfile
+└── README.md
 ```
 
-## Styling
+## Observações importantes
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+- A aplicação depende diretamente do backend para a lógica do jogo e do matchmaking por sala.
+- O cliente armazena o ID do usuário no `localStorage` para manter a identificação do jogador entre reconexões.
+- Em caso de erro de sala ou conexão, a aplicação redireciona o usuário para a tela inicial.
 
----
+## Execução local
 
-Built with ❤️ using React Router.
+Na raiz do frontend:
+
+```bash
+npm install
+npm run dev
+```
+
+A aplicação estará disponível em:
+
+```text
+http://localhost:5173
+```
+
+Se o backend estiver rodando em outra porta, ajuste `VITE_BACKEND_URL` antes de iniciar o frontend.
+
+## Relacionado
+
+- Backend: [../backend/README.md](../backend/README.md)
