@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { Games } from "./game.state.js";
+import { createGame } from "../game/game.factory.js";
 
 export function roomHandler(io: Server, socket: Socket) {
     socket.on("room:join", (roomId: string) => {
@@ -7,30 +8,8 @@ export function roomHandler(io: Server, socket: Socket) {
 
         let game = Games.get(roomId);
 
-        // ==========================================
-        // CRIA O JOGO
-        // ==========================================
         if (!game) {
-            game = {
-                roomId,
-                board: Array(9).fill(null),
-                currentPlayer: "X",
-                players: {
-                    X: {
-                        userId,
-                        socketId: socket.id,
-                    },
-                    O: null,
-                },
-                moves: {
-                    X: [],
-                    O: [],
-                },
-                score: {
-                    X: 0,
-                    O: 0,
-                }
-            };
+            game = createGame(roomId, userId, socket.id);
 
             Games.set(roomId, game);
 

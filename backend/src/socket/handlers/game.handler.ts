@@ -1,13 +1,14 @@
 import { Server, Socket } from "socket.io";
 import { Games } from "./game.state.js";
 import { checkWinner } from "../game/game.logic.js";
+import { playMove } from "../game/game.actions.js";
 
 
 
 export function gameHandler(io: Server, socket: Socket){
 
 
-    socket.on("game:play", ({ position, roomId }) => {
+    socket.on("game:play", ({ position, roomId }: { position: number, roomId: string }) => {
 
         const game = Games.get(roomId);
 
@@ -26,23 +27,7 @@ export function gameHandler(io: Server, socket: Socket){
             return;
         };
 
-        game.board[position] = player;
-
-        if(player === "X"){
-            game.moves.X.push(position);
-        }else{
-            game.moves.O.push(position);
-        }
-
-        if(game.moves.X.length > 3){
-            
-            const firstMove = game.moves.X.shift();
-            game.board[firstMove!] = null;
-        }
-        if(game.moves.O.length > 3){
-            const firstMove = game.moves.O.shift();
-            game.board[firstMove!] = null;
-        }
+        playMove(game, position, player);
 
         Games.set(roomId, game);
         const winner = checkWinner(game.board);
