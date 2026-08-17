@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createGame } from "../socket/game/game.factory";
 
 
-describe("Create a Game and add first player", () =>{
+describe("Create a Game", () =>{
 
     it("Create a Game and add first player", () =>{
         const game = createGame("roomId", "userId", "socketId");
