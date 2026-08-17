@@ -1,8 +1,8 @@
 import fastify from "fastify";
 import cors from "@fastify/cors";
 import { Server } from "socket.io";
-import { registerConnection } from "./socket/connection";
-import { socketMiddleware } from "./socket/middleware/middleware";
+import { registerConnection } from "./socket/connection.js";
+import { socketMiddleware } from "./socket/middleware/middleware.js";
 
 const PORT = 8000;
 const app = fastify();

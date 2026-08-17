@@ -1,5 +1,4 @@
 import { Socket } from "socket.io";
-import { randomUUID } from "node:crypto";
 
 export function socketMiddleware(socket: Socket, next: (err?: Error) => void) {
 

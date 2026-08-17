@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { Games } from "./game.state";
+import { Games } from "./game.state.js";
 
 export function roomHandler(io: Server, socket: Socket) {
     socket.on("room:join", (roomId: string) => {

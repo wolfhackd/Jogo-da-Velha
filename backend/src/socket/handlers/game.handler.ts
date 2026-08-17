@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
-import { Games } from "./game.state";
+import { Games } from "./game.state.js";
 
-const winnerConditions = [
+const winnerConditions: [number, number, number][] = [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],                                        

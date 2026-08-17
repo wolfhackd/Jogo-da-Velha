@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
-import { gameHandler } from "./handlers/game.handler";
-import { roomHandler } from "./handlers/room.handler";
+import { gameHandler } from "./handlers/game.handler.js";
+import { roomHandler } from "./handlers/room.handler.js";
 
 export function registerConnection(io: Server, socket: Socket) {
 

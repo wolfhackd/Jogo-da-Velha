@@ -4,3 +4,4 @@ node_modules
 /src/indexteste.html
 .vscode
 /src/generated/prisma
+dist
