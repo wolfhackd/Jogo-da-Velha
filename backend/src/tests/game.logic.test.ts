@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { checkWinner } from "../socket/game/game.logic";
+import { checkWinner, switchPlayer } from "../socket/game/game.logic";
+import { createGame } from "../socket/game/game.factory";
 
 describe("CheckWinner", ()=>{
 
@@ -48,4 +49,19 @@ describe("CheckWinner", ()=>{
         expect(checkWinner(board)).toBeNull();
     })
 
+})
+
+describe("SwitchPlayer", ()=>{
+
+    it("Should switch player to O",()=>{
+        const game = createGame("roomId", "userId", "socketId");
+        //initial player X
+        expect(switchPlayer(game)).toEqual({ currentPlayer: "O" });
+    })
+
+    it("Should switch player to X", () =>{
+        const game = createGame("roomId", "userId", "socketId");
+        game.currentPlayer = "O";
+        expect(switchPlayer(game)).toEqual({ currentPlayer: "X" });
+    })
 })

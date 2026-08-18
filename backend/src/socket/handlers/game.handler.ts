@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { Games } from "./game.state.js";
-import { checkWinner } from "../game/game.logic.js";
+import { checkWinner, switchPlayer } from "../game/game.logic.js";
 import { playMove } from "../game/game.actions.js";
 
 
@@ -32,14 +32,7 @@ export function gameHandler(io: Server, socket: Socket){
         Games.set(roomId, game);
         const winner = checkWinner(game.board);
 
-        
-        if(game.currentPlayer === "X"){
-            game.currentPlayer = "O";
-        }else{
-            game.currentPlayer = "X";
-        }
-
-        io.to(roomId).emit("game:switch", { currentPlayer: game.currentPlayer });
+        io.to(roomId).emit("game:switch", switchPlayer(game));
 
         io.to(roomId).emit("game:board", {
             board: game.board,

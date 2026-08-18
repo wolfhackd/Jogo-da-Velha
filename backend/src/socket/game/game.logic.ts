@@ -1,3 +1,5 @@
+import type { Game } from "../handlers/game.state";
+
 const winnerConditions: [number, number, number][] = [
     [0, 1, 2],
     [3, 4, 5],
@@ -18,3 +20,14 @@ export const checkWinner = (board: (null | "X" | "O")[]): "X" | "O" | null => {
     }
     return null;
 };
+
+export const switchPlayer = (game: Game)=>{
+        
+    if(game.currentPlayer === "X"){
+        game.currentPlayer = "O";
+    }else{
+        game.currentPlayer = "X";
+    }
+
+    return { currentPlayer: game.currentPlayer };
+}
