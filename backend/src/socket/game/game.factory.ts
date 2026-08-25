@@ -32,4 +32,4 @@ export const createGame = (roomId: string, userId: string, socketId: string ): G
                 O: 0,
             }   
         }
-    }
+}

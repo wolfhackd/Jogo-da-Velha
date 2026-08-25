@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { Games } from "./game.state.js";
-import { checkWinner, switchPlayer } from "../game/game.logic.js";
+import { addWinnerPoint, checkWinner, switchPlayer } from "../game/game.logic.js";
 import { playMove } from "../game/game.actions.js";
 
 
@@ -12,6 +12,7 @@ export function gameHandler(io: Server, socket: Socket){
 
         const game = Games.get(roomId);
 
+        //Verificações de existencia e comprovação de jogador
         let player: "X" | "O" | null = null;
         if(game?.players.X?.socketId === socket.id){
             player = "X";
@@ -27,9 +28,9 @@ export function gameHandler(io: Server, socket: Socket){
             return;
         };
 
+        //Realiza movimentações dos Jogadores
         playMove(game, position, player);
 
-        Games.set(roomId, game);
         const winner = checkWinner(game.board);
 
         io.to(roomId).emit("game:switch", switchPlayer(game));
@@ -40,13 +41,10 @@ export function gameHandler(io: Server, socket: Socket){
             moves: game.moves
         });
 
+        //posso enviar o winner board aqui
+        //Tenho que devolver o tabuleiro vencedor 
         if (winner) {
-            game.score[winner] += 1;
-            game.board.fill(null);
-            game.moves.X = [];
-            game.moves.O = [];
-            game.currentPlayer = winner === "X" ? "O" : "X";
-            Games.set(roomId, game);
+            addWinnerPoint(winner,game);
             io.to(roomId).emit("game:win", game);
         }
     });

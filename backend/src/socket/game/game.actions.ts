@@ -1,4 +1,4 @@
-import type { Game } from "../handlers/game.state";
+import { Games, type Game } from "../handlers/game.state";
 
 
 
@@ -23,6 +23,8 @@ export const playMove = (game: Game,position: number, player: "X" | "O") => {
             game.board[firstMove] = null;
         }
     }
+
+    Games.set(game.roomId, game);
     
 };
 
