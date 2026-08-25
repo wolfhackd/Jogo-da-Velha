@@ -1,4 +1,4 @@
-import { Games, type Game } from "../handlers/game.state";
+import { Games, type Game } from "../handlers/game.state.js";
 
 
 

@@ -1,4 +1,4 @@
-import type { Game } from "../handlers/game.state";
+import type { Game } from "../handlers/game.state.js";
 
 export const createGame = (roomId: string, userId: string, socketId: string ): Game => {
     if(!roomId || roomId === null || roomId === undefined || roomId.trim() === "") {

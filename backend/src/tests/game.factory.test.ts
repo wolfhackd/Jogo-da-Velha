@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createGame } from "../socket/game/game.factory";
+import { createGame } from "../socket/game/game.factory.js";
 
 
 describe("Create a Game", () =>{

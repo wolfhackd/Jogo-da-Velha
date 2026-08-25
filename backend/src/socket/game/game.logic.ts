@@ -1,4 +1,4 @@
-import { Games, type Game } from "../handlers/game.state";
+import { Games, type Game } from "../handlers/game.state.js";
 
 const winnerConditions: [number, number, number][] = [
     [0, 1, 2],

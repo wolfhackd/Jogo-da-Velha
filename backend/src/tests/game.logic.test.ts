@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { addWinnerPoint, checkWinner, switchPlayer, type Winner } from "../socket/game/game.logic";
-import { createGame } from "../socket/game/game.factory";
-import type { Game } from "../socket/handlers/game.state";
+import { addWinnerPoint, checkWinner, switchPlayer, type Winner } from "../socket/game/game.logic.js";
+import { createGame } from "../socket/game/game.factory.js";
 
 describe("CheckWinner", ()=>{
 
