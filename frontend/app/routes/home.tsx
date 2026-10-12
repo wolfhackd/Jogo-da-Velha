@@ -1,7 +1,5 @@
 import HomePage from "~/modules/Home/HomePage";
 
-
-
 export function meta() {
   return [
     { title: "My TicTacToe" },

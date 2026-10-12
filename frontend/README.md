@@ -39,7 +39,7 @@ npm install
 3. Crie um arquivo `.env` na raiz do frontend com a URL do backend:
 
 ```env
-VITE_BACKEND_URL=http://localhost:3000
+VITE_BACKEND_URL=http://localhost:8000
 ```
 
 > Ajuste a URL conforme o ambiente do backend. Se o backend estiver em outro host ou porta, substitua o valor acima.
